@@ -6,10 +6,17 @@ import { currencyFormater } from "@/lib/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Goughnut } from "react-chartjs-2";
 import Modal from "@/components/Modal";
+import { FaRegTrashAlt } from "react-icons/fa";
 
 // Firebase
 import { db } from "@/lib/firebase";
-import { collection, addDoc, getDocs } from "firebase/firestore";
+import {
+  collection,
+  addDoc,
+  getDocs,
+  doc,
+  deleteDoc,
+} from "firebase/firestore";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const dummyData = [
@@ -37,9 +44,36 @@ export default function Home() {
     const collectionRef = collection(db, "income");
     try {
       const docSnap = await addDoc(collectionRef, newIncome);
-      console.log(docSnap);
+      setIncome((prev) => {
+        return [
+          ...prev,
+          {
+            id: docSnap,
+            ...newIncome,
+          },
+        ];
+      });
+      amountRef.current.value = "";
+      descriptionRef.current.value = "";
     } catch (error) {
       console.log(error);
+    }
+  };
+
+  // Delete Income
+  const deleteIncomeHandler = async (incomeId) => {
+    if (window.confirm("Are you sure?")) {
+      const docRef = doc(db, "income", incomeId);
+      try {
+        await deleteDoc(docRef);
+        setIncome((prev) => {
+          return prev.filter((i) => i.id !== incomeId);
+        });
+      } catch (error) {
+        console.log(error.message);
+      }
+    } else {
+      console.log("not deleted");
     }
   };
 
@@ -108,6 +142,13 @@ export default function Home() {
                 </div>
                 <p className="flex items-center gap-2">
                   {currencyFormater(i.amount)}
+                  <button
+                    onClick={() => {
+                      deleteIncomeHandler(i.id);
+                    }}
+                  >
+                    <FaRegTrashAlt />
+                  </button>
                 </p>
               </div>
             );
