@@ -5,7 +5,7 @@
 
 @layer base {
   body {
-    @apply container max-w-2xl px-6 mx-auto bg-slate-900 text-slate-200
+    @apply container relative max-w-2xl px-6 mx-auto bg-slate-900 text-slate-200
   }
   button {
     @apply hover:scale-110 transition-all duration-100

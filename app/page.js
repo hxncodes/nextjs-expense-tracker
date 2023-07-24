@@ -1,9 +1,11 @@
 "use client";
 
+import { useState } from "react";
 import ExpenseItem from "@/components/ExpenseItem";
 import { currencyFormater } from "@/lib/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Goughnut } from "react-chartjs-2";
+import Modal from "@/components/Modal";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const dummyData = [
@@ -14,48 +16,64 @@ const dummyData = [
 ];
 
 export default function Home() {
+  const [modalOpen, setModalOpen] = useState(false);
   return (
-    <main className="text-gray-400">
-      <p className=" text-md">My Balance</p>
-      <section className="text-md py-3">
-        <h2 className="text-4xl font-bold">{currencyFormater(100000)}</h2>
-      </section>
-      <section className="flex items-center gap-2 py-3">
-        <button className="btn btn-primary">+ Expenses</button>
-        <button className="btn btn-primary-outline">+ Income</button>
-      </section>
-      <section className="py-6">
-        <h3 className="text-2xl">My Expenses</h3>
-        <div className="flex flex-col gap-4 mt-4">
-          {dummyData.map((expense) => (
-            <ExpenseItem
-              key={expense.id}
-              color={expense.color}
-              title={expense.title}
-              expAmount={expense.expAmount}
+    <>
+      <Modal show={modalOpen} onClose={setModalOpen}>
+        <h3>Hello World</h3>
+      </Modal>
+      <main className="text-gray-400">
+        <p className=" text-md">My Balance</p>
+        <section className="text-md py-3">
+          <h2 className="text-4xl font-bold">{currencyFormater(100000)}</h2>
+        </section>
+        <section className="flex items-center gap-2 py-3">
+          <button
+            onClick={() => setModalOpen(true)}
+            className="btn btn-primary"
+          >
+            + Expenses
+          </button>
+          <button
+            onClick={() => setModalOpen(true)}
+            className="btn btn-primary-outline"
+          >
+            + Income
+          </button>
+        </section>
+        <section className="py-6">
+          <h3 className="text-2xl">My Expenses</h3>
+          <div className="flex flex-col gap-4 mt-4">
+            {dummyData.map((expense) => (
+              <ExpenseItem
+                key={expense.id}
+                color={expense.color}
+                title={expense.title}
+                expAmount={expense.expAmount}
+              />
+            ))}
+          </div>
+        </section>
+        <section className="py-6">
+          <h3 className="text-2xl">Stats</h3>
+          <div className="w-1/2 mx-auto">
+            <Doughnut
+              data={{
+                labels: dummyData.map((expense) => expense.title),
+                datasets: [
+                  {
+                    label: "Expenses",
+                    data: dummyData.map((expense) => expense.expAmount),
+                    backgroundColor: dummyData.map((expense) => expense.color),
+                    borderColor: ["#18181b"],
+                    borderWidth: 5,
+                  },
+                ],
+              }}
             />
-          ))}
-        </div>
-      </section>
-      <section className="py-6">
-        <h3 className="text-2xl">Stats</h3>
-        <div className="w-1/2 mx-auto">
-          <Doughnut
-            data={{
-              labels: dummyData.map((expense) => expense.title),
-              datasets: [
-                {
-                  label: "Expenses",
-                  data: dummyData.map((expense) => expense.expAmount),
-                  backgroundColor: dummyData.map((expense) => expense.color),
-                  borderColor: ["#18181b"],
-                  borderWidth: 5,
-                },
-              ],
-            }}
-          />
-        </div>
-      </section>
-    </main>
+          </div>
+        </section>
+      </main>
+    </>
   );
 }
