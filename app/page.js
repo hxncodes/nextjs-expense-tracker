@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import ExpenseItem from "@/components/ExpenseItem";
 import { currencyFormater } from "@/lib/utils";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Goughnut } from "react-chartjs-2";
 import Modal from "@/components/Modal";
+
+// Firebase
+import { db } from "@/lib/firebase";
+import { collection, addDoc, getDocs } from "firebase/firestore";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const dummyData = [
@@ -16,11 +20,99 @@ const dummyData = [
 ];
 
 export default function Home() {
-  const [modalOpen, setModalOpen] = useState(false);
+  const [income, setIncome] = useState([]);
+  const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
+  const amountRef = useRef();
+  const descriptionRef = useRef();
+
+  const addIncomeHandler = async (e) => {
+    e.preventDefault();
+    const newIncome = {
+      amount: amountRef.current.value,
+      description: descriptionRef.current.value,
+      createdAt: new Date(),
+    };
+
+    // Saving data in Firebase in collection named income
+    const collectionRef = collection(db, "income");
+    try {
+      const docSnap = await addDoc(collectionRef, newIncome);
+      console.log(docSnap);
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  // Fetching data from firebase
+  useEffect(() => {
+    const getIncomeData = async () => {
+      const collectionRef = collection(db, "income");
+      const docsSnap = await getDocs(collectionRef);
+
+      const data = docsSnap.docs.map((doc) => {
+        return {
+          id: doc.id,
+          ...doc.data(),
+          createdAt: new Date(doc.data().createdAt.toMillis()),
+        };
+      });
+      setIncome(data);
+      console.log(data);
+    };
+    getIncomeData();
+  }, []);
+
   return (
     <>
-      <Modal show={modalOpen} onClose={setModalOpen}>
-        <h3>Hello World</h3>
+      {/* Income Modal */}
+      <Modal show={showAddIncomeModal} onClose={setShowAddIncomeModal}>
+        <form onSubmit={addIncomeHandler} className="input-grp">
+          <div className="input-grp">
+            <label className="" htmlFor="amount">
+              Income Amount
+            </label>
+            <input
+              ref={amountRef}
+              name="amount"
+              type="number"
+              min={1}
+              step={1}
+              placeholder="Enter Income amount"
+              required
+            />
+          </div>
+          <div className="input-grp">
+            <label className="" htmlFor="description">
+              Description
+            </label>
+            <input
+              ref={descriptionRef}
+              name="description"
+              type="text"
+              placeholder="Enter Income description"
+              required
+            />
+          </div>
+          <button type="submit" className="btn btn-primary">
+            Add Income
+          </button>
+        </form>
+        <div className="flex flex-col gap-4 mt-6">
+          <h3 className="text-2xl font-bold">Income History</h3>
+          {income.map((i) => {
+            return (
+              <div className="flex items-center justify-between" key={i.id}>
+                <div>
+                  <p className="font-semibold">{i.description}</p>
+                  <small className="text-xs">{i.createdAt.toISOString()}</small>
+                </div>
+                <p className="flex items-center gap-2">
+                  {currencyFormater(i.amount)}
+                </p>
+              </div>
+            );
+          })}
+        </div>
       </Modal>
       <main className="text-gray-400">
         <p className=" text-md">My Balance</p>
@@ -35,7 +127,7 @@ export default function Home() {
             + Expenses
           </button>
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={() => setShowAddIncomeModal(true)}
             className="btn btn-primary-outline"
           >
             + Income
