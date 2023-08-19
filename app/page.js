@@ -1,22 +1,11 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
-import ExpenseItem from "@/components/ExpenseItem";
-import { currencyFormater } from "@/lib/utils";
+import { useState } from "react";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Goughnut } from "react-chartjs-2";
-import Modal from "@/components/Modal";
-import { FaRegTrashAlt } from "react-icons/fa";
-
-// Firebase
-import { db } from "@/lib/firebase";
-import {
-  collection,
-  addDoc,
-  getDocs,
-  doc,
-  deleteDoc,
-} from "firebase/firestore";
+import { currencyFormater } from "@/lib/utils";
+import ExpenseItem from "@/components/ExpenseItem";
+import IncomeModal from "@/components/Modals/IncomeModal";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 const dummyData = [
@@ -27,134 +16,11 @@ const dummyData = [
 ];
 
 export default function Home() {
-  const [income, setIncome] = useState([]);
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
-  const amountRef = useRef();
-  const descriptionRef = useRef();
-
-  const addIncomeHandler = async (e) => {
-    e.preventDefault();
-    const newIncome = {
-      amount: amountRef.current.value,
-      description: descriptionRef.current.value,
-      createdAt: new Date(),
-    };
-
-    // Saving data in Firebase in collection named income
-    const collectionRef = collection(db, "income");
-    try {
-      const docSnap = await addDoc(collectionRef, newIncome);
-      setIncome((prev) => {
-        return [
-          ...prev,
-          {
-            id: docSnap,
-            ...newIncome,
-          },
-        ];
-      });
-      amountRef.current.value = "";
-      descriptionRef.current.value = "";
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // Delete Income
-  const deleteIncomeHandler = async (incomeId) => {
-    if (window.confirm("Are you sure?")) {
-      const docRef = doc(db, "income", incomeId);
-      try {
-        await deleteDoc(docRef);
-        setIncome((prev) => {
-          return prev.filter((i) => i.id !== incomeId);
-        });
-      } catch (error) {
-        console.log(error.message);
-      }
-    } else {
-      console.log("not deleted");
-    }
-  };
-
-  // Fetching data from firebase
-  useEffect(() => {
-    const getIncomeData = async () => {
-      const collectionRef = collection(db, "income");
-      const docsSnap = await getDocs(collectionRef);
-
-      const data = docsSnap.docs.map((doc) => {
-        return {
-          id: doc.id,
-          ...doc.data(),
-          createdAt: new Date(doc.data().createdAt.toMillis()),
-        };
-      });
-      setIncome(data);
-      console.log(data);
-    };
-    getIncomeData();
-  }, []);
 
   return (
     <>
-      {/* Income Modal */}
-      <Modal show={showAddIncomeModal} onClose={setShowAddIncomeModal}>
-        <form onSubmit={addIncomeHandler} className="input-grp">
-          <div className="input-grp">
-            <label className="" htmlFor="amount">
-              Income Amount
-            </label>
-            <input
-              ref={amountRef}
-              name="amount"
-              type="number"
-              min={1}
-              step={1}
-              placeholder="Enter Income amount"
-              required
-            />
-          </div>
-          <div className="input-grp">
-            <label className="" htmlFor="description">
-              Description
-            </label>
-            <input
-              ref={descriptionRef}
-              name="description"
-              type="text"
-              placeholder="Enter Income description"
-              required
-            />
-          </div>
-          <button type="submit" className="btn btn-primary">
-            Add Income
-          </button>
-        </form>
-        <div className="flex flex-col gap-4 mt-6">
-          <h3 className="text-2xl font-bold">Income History</h3>
-          {income.map((i) => {
-            return (
-              <div className="flex items-center justify-between" key={i.id}>
-                <div>
-                  <p className="font-semibold">{i.description}</p>
-                  <small className="text-xs">{i.createdAt.toISOString()}</small>
-                </div>
-                <p className="flex items-center gap-2">
-                  {currencyFormater(i.amount)}
-                  <button
-                    onClick={() => {
-                      deleteIncomeHandler(i.id);
-                    }}
-                  >
-                    <FaRegTrashAlt />
-                  </button>
-                </p>
-              </div>
-            );
-          })}
-        </div>
-      </Modal>
+      <IncomeModal show={showAddIncomeModal} onClose={setShowAddIncomeModal} />
       <main className="text-gray-400">
         <p className=" text-md">My Balance</p>
         <section className="text-md py-3">
@@ -182,7 +48,7 @@ export default function Home() {
                 key={expense.id}
                 color={expense.color}
                 title={expense.title}
-                expAmount={expense.expAmount}
+                amount={expense.expAmount}
               />
             ))}
           </div>
