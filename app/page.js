@@ -7,11 +7,14 @@ import { Doughnut, Goughnut } from "react-chartjs-2";
 import { currencyFormater } from "@/lib/utils";
 import ExpenseItem from "@/components/ExpenseItem";
 import IncomeModal from "@/components/Modals/IncomeModal";
+import ExpenseModal from "@/components/Modals/ExpenseModal";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Home() {
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
+
+  const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
 
   // state to store balance
   const [balance, setBalance] = useState(0);
@@ -35,6 +38,12 @@ export default function Home() {
   return (
     <>
       <IncomeModal show={showAddIncomeModal} onClose={setShowAddIncomeModal} />
+
+      <ExpenseModal
+        show={showAddExpenseModal}
+        onClose={setShowAddExpenseModal}
+      />
+
       <main className="text-gray-400">
         <p className=" text-md">My Balance</p>
         <section className="text-md py-3">
@@ -42,7 +51,7 @@ export default function Home() {
         </section>
         <section className="flex items-center gap-2 py-3">
           <button
-            onClick={() => setModalOpen(true)}
+            onClick={() => setShowAddExpenseModal(true)}
             className="btn btn-primary"
           >
             + Expenses
