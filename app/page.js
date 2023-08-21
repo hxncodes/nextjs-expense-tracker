@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useContext } from "react";
+import { useState, useContext, useEffect } from "react";
 import { financeContext } from "@/lib/store/financeContext";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Goughnut } from "react-chartjs-2";
@@ -13,8 +13,24 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 export default function Home() {
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
 
+  // state to store balance
+  const [balance, setBalance] = useState(0);
+
   // Destructuring hooks from financeContext
-  const { expenses } = useContext(financeContext);
+  const { income, expenses } = useContext(financeContext);
+
+  //
+  useEffect(() => {
+    const newBalance =
+      income.reduce((total, i) => {
+        return total + i.amount;
+      }, 0) -
+      expenses.reduce((total, e) => {
+        return total + e.total;
+      }, 0);
+
+    setBalance(newBalance);
+  }, [income, expenses]);
 
   return (
     <>
@@ -22,7 +38,7 @@ export default function Home() {
       <main className="text-gray-400">
         <p className=" text-md">My Balance</p>
         <section className="text-md py-3">
-          <h2 className="text-4xl font-bold">{currencyFormater(100000)}</h2>
+          <h2 className="text-4xl font-bold">{currencyFormater(balance)}</h2>
         </section>
         <section className="flex items-center gap-2 py-3">
           <button
