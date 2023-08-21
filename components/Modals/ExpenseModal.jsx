@@ -11,9 +11,9 @@ const ExpenseModal = ({ show, onClose }) => {
   const [expenseAmount, setExpenseAmount] = useState("");
   const [selectedCategory, setSelectedCategory] = useState(null);
 
-  const { expenses } = useContext(financeContext);
+  const { expenses, addExpenseItem } = useContext(financeContext);
 
-  const addExpenseItemHandler = () => {
+  const addExpenseItemHandler = async () => {
     const expense = expenses.find((e) => {
       return e.id === selectedCategory;
     });
@@ -31,10 +31,15 @@ const ExpenseModal = ({ show, onClose }) => {
       ],
     };
 
-    console.log(newExpense);
-    setExpenseAmount("");
-    setSelectedCategory(null);
-    onClose();
+    try {
+      await addExpenseItem(selectedCategory, newExpense);
+      setExpenseAmount("");
+      setSelectedCategory(null);
+      onClose();
+    } catch (error) {
+      console.log(error.message);
+      throw error;
+    }
   };
   return (
     <Modal show={show} onClose={onClose}>
