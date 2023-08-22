@@ -13,7 +13,6 @@ ChartJS.register(ArcElement, Tooltip, Legend);
 
 export default function Home() {
   const [showAddIncomeModal, setShowAddIncomeModal] = useState(false);
-
   const [showAddExpenseModal, setShowAddExpenseModal] = useState(false);
 
   // state to store balance
@@ -38,7 +37,6 @@ export default function Home() {
   return (
     <>
       <IncomeModal show={showAddIncomeModal} onClose={setShowAddIncomeModal} />
-
       <ExpenseModal
         show={showAddExpenseModal}
         onClose={setShowAddExpenseModal}
@@ -67,12 +65,7 @@ export default function Home() {
           <h3 className="text-2xl">My Expenses</h3>
           <div className="flex flex-col gap-4 mt-4">
             {expenses.map((expense) => (
-              <ExpenseItem
-                key={expense.id}
-                color={expense.color}
-                title={expense.title}
-                amount={expense.total}
-              />
+              <ExpenseItem key={expense.id} expense={expense} />
             ))}
           </div>
         </section>

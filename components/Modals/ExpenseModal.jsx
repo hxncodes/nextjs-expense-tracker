@@ -48,7 +48,8 @@ const ExpenseModal = ({ show, onClose }) => {
     }
   };
 
-  const addCategoryHandler = async () => {
+  const addCategoryHandler = async (e) => {
+    e.preventDefault();
     const title = titleRef.current.value;
     const color = colorRef.current.value;
 
@@ -91,14 +92,19 @@ const ExpenseModal = ({ show, onClose }) => {
           </div>
 
           {showAddCategory && (
-            <div className="flex items-center justify-between">
-              <input type="text" placeholder="Enter Title" ref={titleRef} />
+            <form
+              className="flex items-center justify-between"
+              onSubmit={addCategoryHandler}
+            >
+              <input
+                type="text"
+                placeholder="Enter Title"
+                ref={titleRef}
+                required
+              />
               <label>Pick Color</label>
               <input type="color" ref={colorRef} className="w-24 h-10" />
-              <button
-                className="btn btn-primary-outline"
-                onClick={addCategoryHandler}
-              >
+              <button className="btn btn-primary-outline" type="submit">
                 Create
               </button>
               <button
@@ -107,7 +113,7 @@ const ExpenseModal = ({ show, onClose }) => {
               >
                 Cancel
               </button>
-            </div>
+            </form>
           )}
 
           {expenses.map((e) => {
