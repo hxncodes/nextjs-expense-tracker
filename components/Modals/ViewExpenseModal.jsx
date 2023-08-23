@@ -27,7 +27,11 @@ const ViewExpenseModal = ({ show, onClose, expense }) => {
 
   //   Delete Expense Category
   const deleteExpenseCategoryHandler = async () => {
-    if (window.confirm("Are you sure you want to delete this category?")) {
+    if (
+      window.confirm(
+        `Are you sure you want to delete ${expense.title} category?`
+      )
+    ) {
       try {
         await deleteExpenseCategory(expense.id);
         window.alert(`Category ${expense.title} deleted`);

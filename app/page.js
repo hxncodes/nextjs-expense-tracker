@@ -2,12 +2,15 @@
 
 import { useState, useContext, useEffect } from "react";
 import { financeContext } from "@/lib/store/financeContext";
+import { authContext } from "@/lib/store/auth-context";
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from "chart.js";
 import { Doughnut, Goughnut } from "react-chartjs-2";
 import { currencyFormater } from "@/lib/utils";
+import SignIn from "@/components/SignIn";
 import ExpenseItem from "@/components/ExpenseItem";
 import IncomeModal from "@/components/Modals/IncomeModal";
 import ExpenseModal from "@/components/Modals/ExpenseModal";
+import { auth } from "@/lib/firebase/config";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -20,6 +23,9 @@ export default function Home() {
 
   // Destructuring hooks from financeContext
   const { income, expenses } = useContext(financeContext);
+
+  // Destructuring hooks from authContext
+  const { user } = useContext(authContext);
 
   //
   useEffect(() => {
@@ -34,6 +40,10 @@ export default function Home() {
     setBalance(newBalance);
   }, [income, expenses]);
 
+  // Showing Login Page if user is not loggedIn
+  if (!user) {
+    return <SignIn />;
+  }
   return (
     <>
       <IncomeModal show={showAddIncomeModal} onClose={setShowAddIncomeModal} />
