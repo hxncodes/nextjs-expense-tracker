@@ -1,6 +1,5 @@
 import { useContext } from "react";
 import { authContext } from "@/lib/store/auth-context";
-import Image from "next/image";
 import { ImStatsBars } from "react-icons/im";
 
 export default function Nav() {
@@ -13,7 +12,7 @@ export default function Nav() {
         {/* User Information showing Conditionaly */}
         {user && !loading && (
           <div>
-            <Image
+            <img
               className="rounded-full"
               src={user.photoURL}
               width={40}
