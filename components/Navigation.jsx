@@ -8,20 +8,22 @@ export default function Nav() {
 
   return (
     <header className="flex items-center justify-between py-6">
-      <div className="flex rounded-full items-center gap-2">
+      <div className="flex  rounded-full items-center gap-2">
         {/* User Information showing Conditionaly */}
         {user && !loading && (
-          <div>
-            <img
-              className="rounded-full"
-              src={user.photoURL}
-              width={40}
-              height={40}
-              alt={user.displayName}
-              referrerPolicy="no-referrer"
-            />
+          <>
+            <div>
+              <img
+                className="rounded-full"
+                src={user.photoURL}
+                width={40}
+                height={40}
+                alt={user.displayName}
+                referrerPolicy="no-referrer"
+              />
+            </div>
             <h2>Hi, {user.displayName}</h2>
-          </div>
+          </>
         )}
       </div>
 
