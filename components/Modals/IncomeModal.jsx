@@ -1,4 +1,5 @@
 import React, { useContext, useRef, useEffect } from "react";
+import { toast } from "react-toastify";
 import { FaRegTrashAlt } from "react-icons/fa";
 import { currencyFormater } from "@/lib/utils";
 import Modal from "@/components/Modal";
@@ -19,9 +20,11 @@ const IncomeModal = ({ show, onClose }) => {
   // Handler AddIncome
   const addIncomeHandler = async (e) => {
     e.preventDefault();
+    const amount = +amountRef.current.value;
+    const description = descriptionRef.current.value;
     const newIncome = {
-      amount: +amountRef.current.value,
-      description: descriptionRef.current.value,
+      amount: amount,
+      description: description,
       createdAt: new Date(),
       uid: user.uid,
     };
@@ -32,8 +35,10 @@ const IncomeModal = ({ show, onClose }) => {
       // setting input fields as empty
       amountRef.current.value = "";
       descriptionRef.current.value = "";
+      toast.success(`${amount} Rupees added in Income as ${description}`);
     } catch (error) {
       console.log(error);
+      toast.error(error.message);
     }
   };
 
@@ -41,7 +46,9 @@ const IncomeModal = ({ show, onClose }) => {
   const deleteIncomeHandler = async (incomeId) => {
     try {
       await removeIncomeItem(incomeId);
+      toast.info("Income item deleted");
     } catch (error) {
+      toast.error(error.message);
       console.log(error);
     }
   };

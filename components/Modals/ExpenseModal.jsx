@@ -1,9 +1,9 @@
 "use client";
 
 import React, { useRef, useState, useContext } from "react";
-import { financeContext } from "@/lib/store/financeContext";
-import { currencyFormater } from "@/lib/utils";
 import { v4 as uuidv4 } from "uuid";
+import { toast } from "react-toastify";
+import { financeContext } from "@/lib/store/financeContext";
 
 import Modal from "@/components/Modal";
 import { Input } from "postcss";
@@ -42,9 +42,12 @@ const ExpenseModal = ({ show, onClose }) => {
       setExpenseAmount("");
       setSelectedCategory(null);
       onClose();
+      toast.success(
+        `Expense Rupees ${expenseAmount} added in ${expense.title} category`
+      );
     } catch (error) {
       console.log(error.message);
-      throw error;
+      toast.error(error.message);
     }
   };
 
@@ -56,8 +59,10 @@ const ExpenseModal = ({ show, onClose }) => {
     try {
       await addCategory({ title, color, total: 0 });
       setShowAddCategory(false);
+      toast.success(`${title} Category created`);
     } catch (error) {
-      throw error;
+      console.log(error.message);
+      toast.error(error.message);
     }
   };
   return (
