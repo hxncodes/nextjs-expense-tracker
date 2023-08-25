@@ -1,6 +1,7 @@
 "use client";
 
 import { useContext } from "react";
+import { toast } from "react-toastify";
 import { financeContext } from "@/lib/store/financeContext";
 import { currencyFormater } from "@/lib/utils";
 import Modal from "../Modal";
@@ -20,8 +21,10 @@ const ViewExpenseModal = ({ show, onClose, expense }) => {
       };
 
       await deleteExpenseItem(updatedExpense, expense.id);
+      toast.success("Expense item deleted successfull");
     } catch (error) {
       console.log(error);
+      toast.error(error.message);
     }
   };
 
@@ -34,9 +37,10 @@ const ViewExpenseModal = ({ show, onClose, expense }) => {
     ) {
       try {
         await deleteExpenseCategory(expense.id);
-        window.alert(`Category ${expense.title} deleted`);
+        toast.success(`Category ${expense.title} deleted`);
       } catch (error) {
         console.log(error);
+        toast.error(error.message);
       }
     }
   };

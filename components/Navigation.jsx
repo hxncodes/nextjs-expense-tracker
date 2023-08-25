@@ -1,4 +1,5 @@
 import { useContext } from "react";
+import Link from "next/link";
 import { authContext } from "@/lib/store/auth-context";
 import { ImStatsBars } from "react-icons/im";
 
@@ -31,7 +32,9 @@ export default function Nav() {
       {user && !loading && (
         <nav className="flex items-center gap-4">
           <div>
-            <ImStatsBars className="text-2xl" />
+            <Link href="#stats">
+              <ImStatsBars className="text-2xl" />
+            </Link>
           </div>
           <div>
             <button className="btn btn-danger" onClick={logOut}>

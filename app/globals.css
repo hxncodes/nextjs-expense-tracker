@@ -4,6 +4,9 @@
 
 
 @layer base {
+html {
+  scroll-behavior: smooth !important ;
+}
   body {
     @apply container relative max-w-2xl px-6 mx-auto bg-slate-900 text-slate-200
   }
