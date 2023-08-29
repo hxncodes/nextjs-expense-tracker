@@ -1,10 +1,7 @@
-"use client";
-
 import "./globals.css";
 import { Inter } from "next/font/google";
 import { ToastContainer, Toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import Nav from "@/components/Navigation";
 import FinanceContextProvider from "@/lib/store/financeContext";
 import AuthContextProvider from "@/lib/store/auth-context";
 
@@ -22,7 +19,6 @@ export default function RootLayout({ children }) {
         <AuthContextProvider>
           <FinanceContextProvider>
             <ToastContainer />
-            <Nav />
             {children}
           </FinanceContextProvider>
         </AuthContextProvider>

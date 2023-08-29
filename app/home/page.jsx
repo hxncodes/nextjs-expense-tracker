@@ -10,7 +10,7 @@ import SignIn from "@/components/SignIn";
 import ExpenseItem from "@/components/ExpenseItem";
 import IncomeModal from "@/components/Modals/IncomeModal";
 import ExpenseModal from "@/components/Modals/ExpenseModal";
-// import { auth } from "@/lib/firebase/config";
+import { auth } from "@/lib/firebase/config";
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
